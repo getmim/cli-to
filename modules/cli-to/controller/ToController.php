@@ -41,10 +41,6 @@ class ToController extends \Cli\Controller
                 'expect' => $expect,
                 'send' => $send
             ];
-
-            // TODO
-            // make it possible to execute more than one command
-            break;
         }
 
         Storage::add($name, [
@@ -52,7 +48,7 @@ class ToController extends \Cli\Controller
             'expects' => $lines
         ]);
 
-        Bash::echo('Successfully added new content');
+        Bash::echo('New account created');
     }
 
     function connectAction()
@@ -71,26 +67,29 @@ class ToController extends \Cli\Controller
         $rows = [
             '#!' . $bin,
             '',
-            'spawn ' . $account['command'],
-            ''
+            'spawn ' . $account['command']
         ];
 
+        $space = 0;
         $expects = [];
         foreach ($account['expects'] as $info) {
-            $expects[] = [
-                'expect "' . hs($info['expect']) . '" {',
-                '    send "' . $info['send'] . '\\n";'
-            ];
+            $spc = str_repeat(' ', $space);
+            $exp = addslashes($info['expect']);
+            $snd = $info['send'];
+            $rows[] = $spc . 'expect "' . $exp . '" {';
+            $rows[] = $spc . '    send "' . $snd . '\\n"';
+            $space+= 4;
         }
 
-        $last_index = count($expects) - 1;
-
-        foreach ($expects as $index => $lines) {
-            if ($index == $last_index) {
-                $lines[] = '    interact';
+        $interacted = false;
+        foreach ($account['expects'] as $info) {
+            $space-= 4;
+            $spc = str_repeat(' ', $space);
+            if (!$interacted) {
+                $rows[] = $spc . '    interact';
+                $interacted = true;
             }
-            $lines[] = '}';
-            $rows[] = implode(PHP_EOL, $lines);
+            $rows[] = $spc . '}';
         }
 
         $tx = implode(PHP_EOL, $rows);
