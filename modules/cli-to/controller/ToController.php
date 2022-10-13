@@ -12,6 +12,16 @@ use CliTo\Library\Storage;
 
 class ToController extends \Cli\Controller
 {
+    protected function escapeSend(string $text)
+    {
+        $specials = ['{', '}', '[', ']'];
+        foreach ($specials as $find) {
+            $text = str_replace($find, '\\' . $find, $text);
+        }
+
+        return $text;
+    }
+
     function addAction()
     {
         $name = Bash::ask([
@@ -75,7 +85,7 @@ class ToController extends \Cli\Controller
         foreach ($account['expects'] as $info) {
             $spc = str_repeat(' ', $space);
             $exp = addslashes($info['expect']);
-            $snd = $info['send'];
+            $snd = $this->escapeSend($info['send']);
             $rows[] = $spc . 'expect "' . $exp . '" {';
             $rows[] = $spc . '    send "' . $snd . '\\n"';
             $space+= 4;
