@@ -14,7 +14,7 @@ class ToController extends \Cli\Controller
 {
     protected function escapeSend(string $text)
     {
-        $specials = ['{', '}', '[', ']'];
+        $specials = ['{', '}', '[', ']', '(', ')'];
         foreach ($specials as $find) {
             $text = str_replace($find, '\\' . $find, $text);
         }
