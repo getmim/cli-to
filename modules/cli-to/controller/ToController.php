@@ -119,4 +119,15 @@ class ToController extends \Cli\Controller
 
         Bash::echo('Successfully removed from storage');
     }
+
+    function showAction()
+    {
+        $name = $this->req->param->name;
+        $account = Storage::getOne($name);
+        if (!$account) {
+            Bash::error('Account with that name not found');
+        }
+
+        Bash::echo(json_encode($account, JSON_PRETTY_PRINT));
+    }
 }

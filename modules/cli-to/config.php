@@ -62,12 +62,22 @@ return [
                 ],
                 'handler' => 'CliTo\\Controller\\To::remove',
                 'method' => 'GET'
+            ],
+            'cliToolToShow' => [
+                'path' => [
+                    'value' => 'to show (:name)',
+                    'params' => [
+                        'name' => 'any'
+                    ]
+                ],
+                'handler' => 'CliTo\\Controller\\To::show',
+                'method' => 'GET'
             ]
         ]
     ],
     'cli' => [
         'autocomplete' => [
-            '!^to remove ([^ ]*)$!' => [
+            '!^to (show|remove) ([^ ]*)$!' => [
                 'priority' => 5,
                 'handler' => [
                     'class' => 'CliTo\\Library\\Autocomplete',
